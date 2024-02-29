@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatting Website</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="loginPage">
+        <h2>Login</h2>
+        <input type="text" id="username" placeholder="Username">
+        <input type="password" id="password" placeholder="Password">
+        <button onclick="login()">Login</button>
+    </div>
+
+    <div id="chatPage" style="display: none;">
+        <div id="chatMessages"></div>
+        <input type="text" id="messageInput" placeholder="Type your message...">
+        <button onclick="sendMessage()">Send</button>
+        <button id="adminPanelButton" style="display: none;" onclick="showAdminPanel()">Admin Panel</button>
+    </div>
+
+    <div id="adminPanel" style="display: none;">
+        <h2>Admin Panel</h2>
+        <button onclick="showCreateUserForm()">Create User</button>
+        <button onclick="showDeleteUserForm()">Delete User</button>
+        <button onclick="showChangePasswordForm()">Change Password</button>
+        <button onclick="goBackToChat()">Back to Chat</button>
+        <div id="createUserForm" style="display: none;">
+            <input type="text" id="newUsername" placeholder="New Username">
+            <input type="password" id="newPassword" placeholder="New Password">
+            <label><input type="checkbox" id="isAdmin"> Admin</label>
+            <button onclick="createUser()">Create</button>
+        </div>
+        <div id="deleteUserForm" style="display: none;">
+            <select id="userToDelete"></select>
+            <button onclick="deleteUser()">Delete</button>
+        </div>
+        <div id="changePasswordForm" style="display: none;">
+            <select id="userToChangePassword"></select>
+            <input type="password" id="newPasswordForUser" placeholder="New Password">
+            <button onclick="changePassword()">Change Password</button>
+        </div>
+    </div>
+
+    <script src="scripts.js"></script>
+</body>
+</html>
