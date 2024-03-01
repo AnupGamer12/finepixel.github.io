@@ -4,46 +4,355 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chatting Website</title>
-    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f2f2f2;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .login-container, .chat-container, .admin-panel-container {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            margin-bottom: 20px;
+        }
+
+        input[type="text"], input[type="password"], button, .message-input {
+            width: calc(100% - 20px);
+            margin-bottom: 10px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        button, .send-button {
+            cursor: pointer;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+
+        button:hover, .send-button:hover {
+            background-color: #45a049;
+        }
+
+        .message-container {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .message {
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            padding: 10px;
+            margin-bottom: 10px;
+            position: relative;
+        }
+
+        .options-button {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            padding: 0;
+            background: none;
+            border: none;
+            font-size: 18px;
+            cursor: pointer;
+        }
+
+        .options-menu {
+            display: none;
+            position: absolute;
+            top: 25px;
+            right: 0;
+            background-color: #f9f9f9;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            border-radius: 5px;
+            z-index: 1;
+        }
+
+        .options-menu button {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            text-align: left;
+            border: none;
+            background: none;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .options-menu button:hover {
+            background-color: #ddd;
+        }
+
+        .admin-panel-button {
+            background-color: #f44336;
+            margin-right: 10px;
+        }
+
+        .admin-panel-button:hover {
+            background-color: #d32f2f;
+        }
+
+        .reply-button {
+            background-color: #009688;
+        }
+
+        .reply-button:hover {
+            background-color: #00796b;
+        }
+
+        .edit-button, .delete-button {
+            background-color: #2196F3;
+        }
+
+        .edit-button:hover, .delete-button:hover {
+            background-color: #1e87db;
+        }
+    </style>
 </head>
 <body>
-    <div id="loginPage">
-        <h2>Login</h2>
-        <input type="text" id="username" placeholder="Username">
-        <input type="password" id="password" placeholder="Password">
-        <button onclick="login()">Login</button>
+    <div class="container">
+        <div id="loginPage" class="login-container">
+            <h2>Login</h2>
+            <input type="text" id="username" placeholder="Username">
+            <input type="password" id="password" placeholder="Password">
+            <button onclick="login()">Login</button>
+        </div>
+
+        <div id="chatPage" class="chat-container" style="display: none;">
+            <div id="chatMessages" class="message-container"></div>
+            <input type="text" id="messageInput" class="message-input" placeholder="Type your message...">
+            <button onclick="sendMessage()" class="send-button">Send</button>
+            <button id="adminPanelButton" class="admin-panel-button" style="display: none;" onclick="showAdminPanel()">Admin Panel</button>
+        </div>
+
+        <div id="adminPanel" class="admin-panel-container" style="display: none;">
+            <h2>Admin Panel</h2>
+            <button onclick="showCreateUserForm()">Create User</button>
+            <button onclick="showDeleteUserForm()">Delete User</button>
+            <button onclick="showChangePasswordForm()">Change Password</button>
+            <button onclick="goBackToChat()">Back to Chat</button>
+            <div id="createUserForm" style="display: none;">
+                <input type="text" id="newUsername" placeholder="New Username">
+                <input type="password" id="newPassword" placeholder="New Password">
+                <label><input type="checkbox" id="isAdmin"> Admin</label>
+                <button onclick="createUser()">Create</button>
+            </div>
+            <div id="deleteUserForm" style="display: none;">
+                <select id="userToDelete"></select>
+                <button onclick="deleteUser()">Delete</button>
+            </div>
+            <div id="changePasswordForm" style="display: none;">
+                <select id="userToChangePassword"></select>
+                <input type="password" id="newPasswordForUser" placeholder="New Password">
+                <button onclick="changePassword()">Change Password</button>
+            </div>
+        </div>
     </div>
 
-    <div id="chatPage" style="display: none;">
-        <div id="chatMessages"></div>
-        <input type="text" id="messageInput" placeholder="Type your message...">
-        <button onclick="sendMessage()">Send</button>
-        <button id="adminPanelButton" style="display: none;" onclick="showAdminPanel()">Admin Panel</button>
-    </div>
+    <script>
+        const users = [
+            { username: "AnupGamer", password: "anup123", isAdmin: true }
+        ];
 
-    <div id="adminPanel" style="display: none;">
-        <h2>Admin Panel</h2>
-        <button onclick="showCreateUserForm()">Create User</button>
-        <button onclick="showDeleteUserForm()">Delete User</button>
-        <button onclick="showChangePasswordForm()">Change Password</button>
-        <button onclick="goBackToChat()">Back to Chat</button>
-        <div id="createUserForm" style="display: none;">
-            <input type="text" id="newUsername" placeholder="New Username">
-            <input type="password" id="newPassword" placeholder="New Password">
-            <label><input type="checkbox" id="isAdmin"> Admin</label>
-            <button onclick="createUser()">Create</button>
-        </div>
-        <div id="deleteUserForm" style="display: none;">
-            <select id="userToDelete"></select>
-            <button onclick="deleteUser()">Delete</button>
-        </div>
-        <div id="changePasswordForm" style="display: none;">
-            <select id="userToChangePassword"></select>
-            <input type="password" id="newPasswordForUser" placeholder="New Password">
-            <button onclick="changePassword()">Change Password</button>
-        </div>
-    </div>
+        let loggedInUser = null;
+        let messages = [];
 
-    <script src="scripts.js"></script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const messageInput = document.getElementById("messageInput");
+            messageInput.addEventListener("keypress", function(event) {
+                if (event.key === "Enter") {
+                    sendMessage();
+                }
+            });
+        });
+
+        function login() {
+            const username = document.getElementById("username").value;
+            const password = document.getElementById("password").value;
+
+            const user = users.find(user => user.username === username && user.password === password);
+            if (user) {
+                loggedInUser = user;
+                showChatPage();
+                if (user.isAdmin) {
+                    document.getElementById("adminPanelButton").style.display = "block";
+                }
+            } else {
+                alert("Invalid username or password. Please try again.");
+            }
+        }
+
+        function showAdminPanel() {
+            hideAllContainers();
+            document.getElementById("adminPanel").style.display = "block";
+        }
+
+        function goBackToChat() {
+            showChatPage();
+        }
+
+        function showChatPage() {
+            hideAllContainers();
+            document.getElementById("chatPage").style.display = "block";
+            displayMessages();
+        }
+
+        function sendMessage() {
+            const message = document.getElementById("messageInput").value;
+            messages.push({ user: loggedInUser.username, message: message });
+            displayMessages();
+            document.getElementById("messageInput").value = "";
+        }
+
+        function displayMessages() {
+            const chatMessages = document.getElementById("chatMessages");
+            chatMessages.innerHTML = "";
+            messages.forEach((msg, index) => {
+                const messageDiv = document.createElement("div");
+                messageDiv.classList.add("message");
+                messageDiv.textContent = `${msg.user}: ${msg.message}`;
+
+                if (msg.user === loggedInUser.username) {
+                    const optionsButton = document.createElement("button");
+                    optionsButton.textContent = "⋮";
+                    optionsButton.classList.add("options-button");
+
+                    const optionsMenu = document.createElement("div");
+                    optionsMenu.classList.add("options-menu");
+
+                    const editButton = document.createElement("button");
+                    editButton.textContent = "Edit";
+                    editButton.classList.add("edit-button");
+                    editButton.onclick = () => editMessage(index);
+                    optionsMenu.appendChild(editButton);
+
+                    const deleteButton = document.createElement("button");
+                    deleteButton.textContent = "Delete";
+                    deleteButton.classList.add("delete-button");
+                    deleteButton.onclick = () => deleteMessage(index);
+                    optionsMenu.appendChild(deleteButton);
+
+                    messageDiv.appendChild(optionsButton);
+                    messageDiv.appendChild(optionsMenu);
+                } else {
+                    const replyButton = document.createElement("button");
+                    replyButton.textContent = "Reply";
+                    replyButton.classList.add("reply-button");
+                    replyButton.onclick = () => replyToMessage(msg.user);
+                    messageDiv.appendChild(replyButton);
+                }
+
+                chatMessages.appendChild(messageDiv);
+            });
+        }
+
+        function editMessage(index) {
+            const newMessage = prompt("Enter new message:");
+            if (newMessage !== null) {
+                messages[index].message = newMessage;
+                displayMessages();
+            }
+        }
+
+        function deleteMessage(index) {
+            messages.splice(index, 1);
+            displayMessages();
+        }
+
+        function replyToMessage(username) {
+            const replyMessage = prompt(`Reply to ${username}:`);
+            if (replyMessage !== null) {
+                messages.push({ user: loggedInUser.username, message: replyMessage });
+                displayMessages();
+            }
+        }
+
+        function showCreateUserForm() {
+            document.getElementById("createUserForm").style.display = "block";
+            document.getElementById("deleteUserForm").style.display = "none";
+            document.getElementById("changePasswordForm").style.display = "none";
+            populateUserList();
+        }
+
+        function showDeleteUserForm() {
+            document.getElementById("createUserForm").style.display = "none";
+            document.getElementById("deleteUserForm").style.display = "block";
+            document.getElementById("changePasswordForm").style.display = "none";
+            populateUserList();
+        }
+
+        function showChangePasswordForm() {
+            document.getElementById("createUserForm").style.display = "none";
+            document.getElementById("deleteUserForm").style.display = "none";
+            document.getElementById("changePasswordForm").style.display = "block";
+            populateUserList();
+        }
+
+        function populateUserList() {
+            const userToDeleteSelect = document.getElementById("userToDelete");
+            const userToChangePasswordSelect = document.getElementById("userToChangePassword");
+
+            userToDeleteSelect.innerHTML = "";
+            userToChangePasswordSelect.innerHTML = "";
+
+            users.forEach(user => {
+                const option = document.createElement("option");
+                option.value = user.username;
+                option.textContent = user.username;
+                userToDeleteSelect.appendChild(option);
+                userToChangePasswordSelect.appendChild(option.cloneNode(true));
+            });
+        }
+
+        function createUser() {
+            const newUsername = document.getElementById("newUsername").value;
+            const newPassword = document.getElementById("newPassword").value;
+            const isAdmin = document.getElementById("isAdmin").checked;
+            users.push({ username: newUsername, password: newPassword, isAdmin: isAdmin });
+            alert("User created successfully!");
+        }
+
+        function deleteUser() {
+            const userToDelete = document.getElementById("userToDelete").value;
+            const index = users.findIndex(user => user.username === userToDelete);
+            if (index !== -1) {
+                users.splice(index, 1);
+                alert("User deleted successfully!");
+                populateUserList();
+            }
+        }
+
+        function changePassword() {
+            const userToChangePassword = document.getElementById("userToChangePassword").value;
+            const newPassword = document.getElementById("newPasswordForUser").value;
+            const user = users.find(user => user.username === userToChangePassword);
+            if (user) {
+                user.password = newPassword;
+                alert("Password changed successfully!");
+            }
+        }
+
+        function hideAllContainers() {
+            document.querySelectorAll(".container").forEach(container => {
+                container.style.display = "none";
+            });
+        }
+    </script>
 </body>
 </html>
