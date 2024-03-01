@@ -5,6 +5,15 @@ const users = [
 let loggedInUser = null;
 let messages = [];
 
+document.addEventListener("DOMContentLoaded", function() {
+    const messageInput = document.getElementById("messageInput");
+    messageInput.addEventListener("keypress", function(event) {
+        if (event.key === "Enter") {
+            sendMessage();
+        }
+    });
+});
+
 function login() {
     const username = document.getElementById("username").value;
     const password = document.getElementById("password").value;
