@@ -12,6 +12,20 @@ body {
 
 input[type="text"], input[type="password"], button {
     margin-bottom: 10px;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+button {
+    cursor: pointer;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+}
+
+button:hover {
+    background-color: #45a049;
 }
 
 .message {
